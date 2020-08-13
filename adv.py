@@ -33,6 +33,31 @@ backwards_path = []
 backwards_path_compass = {'n':'s', 's':'n', 'e':'w', 'w':'e'}
 
 # current player location
+room_location = player.current_room.id
+# index of room start point
+visited[room_location] = player.current_room.get_exits()
+
+# loop through unvisited rooms
+while len(visited) < len(room_graph):
+    if player.current_room.id not in visited:
+        visited[player.current_room.id] = player.current_room.get_exits()
+        last_path = backwards_path[-1]
+        visited[player.current_room.id].remove(last_path)
+
+    # if all rooms have been visited, stop loop and find unvisited nodes
+    if len(visited[player.current_room.id]) == 0:
+        last_path = backwards_path[-1]
+        backwards_path.pop()
+        traversal_path.append(last_path)
+        player.travel(last_path)
+
+    # didn't take the exit
+    else:
+        cardinal_direction = visited[player.current_room.id][-1]
+        visited[player.current_room.id].pop()
+        traversal_path.append(cardinal_direction)
+        backwards_path.append(backwards_path_compass[cardinal_direction])
+        player.travel(cardinal_direction)
 
 
 
@@ -56,12 +81,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
